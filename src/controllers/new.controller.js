@@ -1,73 +1,94 @@
-const New = require('../models/new.model');
+const New = require("../models/new.model");
 
-// Create a new record
-exports.createNew = async (req, res) => {
+exports.create = async (req, res) => {
   try {
-    const { title_la, title_en, description_la, description_en } = req.body;
-    const newRecord = await New.create({
-      title_la,
-      title_en,
-      description_la,
-      description_en
+
+    const { title, description } = req.body;
+
+    console.log(title, description);
+
+    if (!title || !description) {
+      return res.status(400).json({ message: "Please provide all required fields" });
+    }
+
+   const newEntry  = await New.create({
+      title,
+      description
     });
-    res.status(201).json(newRecord);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating record', error });
-  }
-};
 
-// Get all records
-exports.getAllNews = async (req, res) => {
+    return res.status(201).json({ message: "New created successfully", data: newEntry });
+
+      
+    
+  } catch (error) {
+    return res.status(500).json({ message: "SERVER ERROR", error: error });
+  }
+}
+
+exports.getNews = async (req, res) => {
   try {
+    
+    // const lang = req.query.lang || "la";
+
     const news = await New.findAll();
-    res.status(200).json(news);
+    if (!news || news.length === 0) {
+      return res.status(404).json({ message: "No news found" });
+    }
+
+    // Get the desired language from query params (default to "la" if not provided)
+    const lang = req.query.lang || "en";
+
+    // Filter news data by the specified language
+    const filteredData = news.map(item => {
+      console.log(item);
+      return {
+        id: item.id,
+        title:{
+          code: item.code,
+          string: item.title[lang],
+
+        },
+        description:{
+          code: item.code,
+          string: item.description[lang]
+        }
+        
+      };
+    });
+
+    return res.status(200).json({ message: "News fetched successfully", data: filteredData });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching records', error });
+    return res.status(500).json({ message: "SERVER ERROR", error: error.message });
   }
 };
 
-// Get a single record by ID
-exports.getNewById = async (req, res) => {
+exports.getOneNews = async (req, res) => {
   try {
     const { id } = req.params;
-    const newRecord = await New.findByPk(id);
-    if (!newRecord) {
-      return res.status(404).json({ message: 'Record not found' });
+    const news = await New.findByPk(id);
+    if (!news) {
+      return res.status(404).json({ message: "News not found" });
     }
-    res.status(200).json(newRecord);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching record', error });
-  }
-};
 
-// Update a record by ID
-exports.updateNew = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title_la, title_en, description_la, description_en } = req.body;
-    const updatedRecord = await New.update(
-      { title_la, title_en, description_la, description_en },
-      { where: { id } }
-    );
-    if (updatedRecord[0] === 0) {
-      return res.status(404).json({ message: 'Record not found or not updated' });
-    }
-    res.status(200).json({ message: 'Record updated successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating record', error });
-  }
-};
 
-// Delete a record by ID
-exports.deleteNew = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deleted = await New.destroy({ where: { id } });
-    if (!deleted) {
-      return res.status(404).json({ message: 'Record not found' });
-    }
-    res.status(200).json({ message: 'Record deleted successfully' });
+    // Get the desired language from query params (default to "la" if not provided)
+    const lang = req.query.lang || "en";
+
+    // Filter news data by the specified language
+    const filteredData = {
+      id: news.id,
+      title: {
+        code: news.code,
+        string: news.title[lang],
+      },
+      description: {
+        code: news.code,
+        string: news.description[lang],
+      },
+    };
+
+    return res.status(200).json({ message: "News fetched successfully", data: filteredData });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting record', error });
+    return res.status(500).json({ message: "SERVER ERROR", error: error.message });
   }
 };

@@ -1,10 +1,10 @@
 const Sequelize = require("sequelize");
 
-const sequelize = new Sequelize('change-language', 'root', '', {
+const sequelize = new Sequelize('change-language', 'postgres', 'huevangxp', {
     host: 'localhost',
-    dialect: 'mysql',
+    dialect: 'postgres',
     logging: false,
-    port: 3306,
+    port: 5432,
     pool: {
         max: 5,
         min: 0,
@@ -25,6 +25,6 @@ sequelize
         console.error('Unable to connect to the database:', err);
     });
 
-    sequelize.sync();
+    sequelize.sync({ force: false });
 
 module.exports = sequelize

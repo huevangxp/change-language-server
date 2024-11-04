@@ -7,20 +7,12 @@ const New = sequelize.define("new", {
         primaryKey: true,
         autoIncrement: true
     },
-    title_la: {
-        type: DataTypes.STRING,
+    title: {
+        type: DataTypes.JSON, // Changed to JSON to hold an object
         allowNull: false
     },
-    title_en: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    description_la: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    description_en: {
-        type: DataTypes.STRING,
+    description: {
+        type: DataTypes.JSON, // Changed to JSON to hold an object
         allowNull: false
     }
 });
