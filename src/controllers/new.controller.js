@@ -43,15 +43,10 @@ exports.getNews = async (req, res) => {
       console.log(item);
       return {
         id: item.id,
-        title:{
-          code: item.code,
-          string: item.title[lang],
-
-        },
-        description:{
-          code: item.code,
-          string: item.description[lang]
-        }
+        title:  item.title[lang],
+ 
+        description:  item.description[lang]
+ 
         
       };
     });
