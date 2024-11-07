@@ -26,14 +26,10 @@ exports.getProducts = async (req, res) => {
             console.log(item);
             return {
                 id: item.id,
-                title: {
-                    code: item.title.code,
-                    string: item.title[lang],
-                },
-                description: {
-                    code: item.description.code,
-                    string: item.description[lang],
-                },
+                title: item.title[lang],
+        
+                description:item.description[lang],
+                 
                 price: item.price,
             };
         });
@@ -47,49 +43,3 @@ exports.getProducts = async (req, res) => {
 };
 
 
-exports.getTest = async (req, res) => {
-    try {
-        const api = 'https://acs-m.lazada.co.th/h5/mtop.relationrecommend.lazadarecommend.recommend/1.0/';
-        const params = {
-            appKey: '24677475',
-            t: '1730711584646',
-            sign: 'e51a29f7b9ecb52497adcaace805a48e',
-            api: 'mtop.relationrecommend.LazadaRecommend.recommend',
-            v: '1.0',
-            type: 'originaljson',
-            isSec: 1,
-            AntiCreep: true,
-            timeout: 20000,
-            dataType: 'json',
-            sessionOption: 'AutoLoginOnly',
-            'x-i18n-language': 'th',
-            'x-i18n-regionID': 'TH',
-            data: JSON.stringify({
-                appId: "32104",
-                params: JSON.stringify({
-                    appId: "32104",
-                    isbackup: true,
-                    newTileEnable: true,
-                    language: "th",
-                    region_id: "TH",
-                    platform: "pc",
-                    scene: "homepage",
-                    appVersion: "7.48.0",
-                    anonymous_id: "iDOvH4wAU3gCAWeJW/TDDb6T",
-                    pageSize: 50,
-                    userId: 0,
-                    pageNo: 0
-                })
-            })
-        };
-
-        const response = await axios.get(api, { params });
-        const data = response.data;
-
-        return res.status(200).json({ message: "Data fetched successfully", data });
-        
-    } catch (error) {
-        console.error("Error fetching Lazada data:", error);
-        return res.status(500).json({ message: "SERVER ERROR", error: error.message });
-    }
-};
